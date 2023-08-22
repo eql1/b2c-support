@@ -29,9 +29,14 @@ public class User implements UserDetails {
 
     // todo: add @NotBlank, @Size(max)
     private String username;
+
+    // todo: @JsonIgnore
     private String password;
 //    @Enumerated(EnumType.STRING)
-    private String role; // todo: implement enum
+    private String role; // todo: implement enum, fix bug
+
+    @OneToMany(mappedBy = "createdBy")
+    private List<Ticket> tickets;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
