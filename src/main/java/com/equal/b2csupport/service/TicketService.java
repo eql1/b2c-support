@@ -8,6 +8,7 @@ import com.equal.b2csupport.model.User;
 import com.equal.b2csupport.repo.TicketRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
@@ -43,7 +44,7 @@ public class TicketService {
 
     @Transactional
     public TicketResponse createTicket(TicketRequest ticketRequest) {
-        String username = ticketRequest.getUsername();
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
         User user = userService.getUserByUsername(username);
         Ticket ticket = Ticket.builder()
                 .name(ticketRequest.getName())

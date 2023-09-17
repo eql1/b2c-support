@@ -10,7 +10,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 public class TicketRequest {
-    private String username;
     private String name;
     private String description;
 }

@@ -1,13 +1,12 @@
 package com.equal.b2csupport.auth;
 
+import com.equal.b2csupport.exception.UsernameAlreadyExistsException;
 import com.equal.b2csupport.jwt.JwtService;
 import com.equal.b2csupport.model.User;
 import com.equal.b2csupport.repo.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -22,6 +21,10 @@ public class AuthenticationService {
 
 
     public AuthenticationResponse register(RegisterRequest registerRequest) {
+        if(userRepository.findByUsername(registerRequest.getUsername()).isPresent()) {
+            throw new UsernameAlreadyExistsException();
+        }
+
         User user = User.builder()
                 .username(registerRequest.getUsername())
                 .password(passwordEncoder.encode(registerRequest.getPassword()))
@@ -40,17 +43,12 @@ public class AuthenticationService {
                     authRequest.getUsername(),
                     authRequest.getPassword()
             )
-        ); // todo: check exceptions in the documentation
+        );
         User user = userRepository.findByUsername(authRequest.getUsername())
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
         String jwtToken = jwtService.generateToken(user);
         return AuthenticationResponse.builder()
                 .token(jwtToken)
                 .build();
-    }
-
-    public String getAuthenticatedUsername() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        return authentication.getName();
     }
 }

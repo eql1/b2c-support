@@ -33,7 +33,7 @@ public class User implements UserDetails {
     // todo: @JsonIgnore
     private String password;
 //    @Enumerated(EnumType.STRING)
-    private String role; // todo: implement enum, fix bug
+    private String role; // todo: implement enum, fix bug string enum
 
     @OneToMany(mappedBy = "createdBy")
     private List<Ticket> tickets;
