@@ -8,6 +8,7 @@ import com.equal.b2csupport.model.User;
 import com.equal.b2csupport.repo.TicketRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -29,6 +30,13 @@ public class TicketService {
                         .map(this::mapToResponse)
                         .collect(Collectors.toList()))
                 .orElse(Collections.emptyList());
+    }
+
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SUPPORT')")
+    public List<TicketResponse> getAllTickets() {
+        return ticketRepository.findAll()
+                .stream().map(this::mapToResponse)
+                .collect(Collectors.toList());
     }
 
     // todo: move mapToResponse in separate class

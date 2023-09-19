@@ -13,20 +13,25 @@ import java.util.List;
 // todo: for test, change mappings and realizations
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/tickets")
+@RequestMapping("api/v1/tickets")
 public class TicketController {
     private final TicketService ticketService;
 
-    @GetMapping()
+    @GetMapping("/user")
     public ResponseEntity<List<TicketResponse>> getUserTickets() {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         return ResponseEntity.ok(ticketService.getUserTickets(username));
     }
 
-    @PostMapping()
+    @PostMapping("/create")
     public ResponseEntity<TicketResponse> createTicket(@RequestBody TicketRequest ticketRequest) {
         return ResponseEntity.ok(ticketService.createTicket(ticketRequest));
     }
 
-    // todo: implement get All tickets @PreAuthorize or @Secured, think about necessity of SpEL and flexibility (check docs)
+    // done: implement get All tickets @PreAuthorize or @Secured in service, todo: read about SpEL and flexibility (check docs)
+    @GetMapping("/all")
+    public ResponseEntity<List<TicketResponse>> getAllTickets() {
+        return ResponseEntity.ok(ticketService.getAllTickets());
+    }
+
 }
