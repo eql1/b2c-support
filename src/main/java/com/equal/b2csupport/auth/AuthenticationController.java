@@ -34,4 +34,10 @@ public class AuthenticationController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Incorrect credentials");
         }
     }
+
+//    // todo: delete, for debug only
+//    @GetMapping("/info")
+//    public ResponseEntity<?> info() {
+//        return ResponseEntity.ok(SecurityContextHolder.getContext().getAuthentication().getAuthorities());
+//    }
 }

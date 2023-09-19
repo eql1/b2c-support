@@ -32,7 +32,7 @@ public class TicketService {
                 .orElse(Collections.emptyList());
     }
 
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SUPPORT')")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'SUPPORT')")
     public List<TicketResponse> getAllTickets() {
         return ticketRepository.findAll()
                 .stream().map(this::mapToResponse)

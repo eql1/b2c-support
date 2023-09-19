@@ -16,14 +16,15 @@ import java.util.function.Function;
 
 @Service
 public class JwtService {
-    private static final String SECRET_KEY = "f6c893929a6244925e0cf2b35da4a20dc13a478dce6ae73a6611b8ef2f032f94"; // todo: replace with application property
+    private static final String SECRET_KEY = "f6c893929a6244925e0cf2b35da4a20dc13a478dce6ae73a6611b8ef2f032f94"; // todo: change and replace with application property
 
 //    @Value("${jwtTokenExpirationTime}") todo: replace with application property
-    private final int jwtTokenExpirationTime = 1000 * 60 * 24;
+    private final int jwtTokenExpirationTime = 1000 * 60 * 60;
 
     public String generateToken(UserDetails userDetails, Map<String, Object> extraClaims) {
         return Jwts.builder()
                 .setClaims(extraClaims)
+                .claim("roles", userDetails.getAuthorities())
                 .setSubject(userDetails.getUsername())
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + jwtTokenExpirationTime))
