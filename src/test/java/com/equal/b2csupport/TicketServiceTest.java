@@ -1,7 +1,5 @@
 package com.equal.b2csupport;
 
-import com.equal.b2csupport.repo.TicketRepository;
-import com.equal.b2csupport.service.TicketService;
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -9,8 +7,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 @SpringBootTest
 @RequiredArgsConstructor
 public class TicketServiceTest {
-    private final TicketRepository ticketRepository;
-    private final TicketService ticketService;
+//    private final TicketRepository ticketRepository;
+//    private final TicketService ticketService;
 
     @Test
     // todo: realize unit testing for createTicket, read about mocking the authenticated user maybe?
