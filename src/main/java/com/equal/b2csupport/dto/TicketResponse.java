@@ -12,6 +12,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class TicketResponse {
+    private Long id;
     private String name;
     private String description;
     private TicketStatus status;
@@ -19,6 +20,7 @@ public class TicketResponse {
 
     public static TicketResponseBuilder fromTicket(Ticket ticket) {
         return TicketResponse.builder()
+                .id(ticket.getId())
                 .name(ticket.getName())
                 .description(ticket.getDescription())
                 .status(ticket.getStatus());

@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 public class MapperToResponse {
     public TicketResponse mapToResponse(Ticket ticket) {
         return TicketResponse.builder()
+                .id(ticket.getId())
                 .name(ticket.getName())
                 .description(ticket.getDescription())
                 .status(ticket.getStatus())

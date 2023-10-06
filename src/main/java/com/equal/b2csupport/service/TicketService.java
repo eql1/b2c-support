@@ -1,9 +1,10 @@
 package com.equal.b2csupport.service;
 
 
-
+import com.equal.b2csupport.auth.AuthenticationService;
 import com.equal.b2csupport.dto.TicketRequest;
 import com.equal.b2csupport.dto.TicketResponse;
+import com.equal.b2csupport.exception.TicketNotFoundException;
 import com.equal.b2csupport.model.Ticket;
 import com.equal.b2csupport.model.TicketStatus;
 import com.equal.b2csupport.model.User;
@@ -11,6 +12,7 @@ import com.equal.b2csupport.repo.TicketRepository;
 import com.equal.b2csupport.util.mappers.MapperToResponse;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -25,9 +27,10 @@ public class TicketService {
     private final TicketRepository ticketRepository;
     private final UserService userService;
     private final MapperToResponse mapperToResponse;
+    private final AuthenticationService authService;
 
-    // todo: fix 'org.hibernate.LazyInitializationException' exception
-    public List<TicketResponse> getUserTickets(String username) {
+    public List<TicketResponse> getUserTickets() {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
         User user = userService.getUserByUsername(username);
         return ticketRepository.findByCreatedBy(user)
                 .map(tickets -> tickets.stream()
@@ -44,7 +47,20 @@ public class TicketService {
                 .collect(Collectors.toList());
     }
 
-
+    // todo: changeStatus for admin and support roles,
+    @Transactional
+    public TicketResponse changeStatus(Long id, TicketStatus changeTo) throws TicketNotFoundException {
+        Ticket ticket = ticketRepository.findById(id)
+                .orElseThrow(() -> new TicketNotFoundException("Tickit with id " + id + " not found"));
+        checkAccess(ticket);
+        ticket.setStatus(changeTo);
+        ticket = ticketRepository.save(ticket);
+        return mapperToResponse.mapToResponse(ticket);
+//        ticketRepository.updateTicketStatus(id, changeTo);
+//        return ticketRepository.findById(id).map(mapperToResponse::mapToResponse)
+//                .orElseThrow(() ->
+//                new UpdateFailedException("Failed to update ticket status"));
+    }
 
     @Transactional
     public TicketResponse createTicket(TicketRequest ticketRequest) {
@@ -60,5 +76,11 @@ public class TicketService {
         return TicketResponse.fromTicket(savedTicket)
                 .createdBy(username)
                 .build();
+    }
+
+    private void checkAccess(Ticket ticket) {
+        if (!ticket.getCreatedBy().getId().equals(authService.getCurrentUserId())) {
+            throw new AccessDeniedException("Access denied to this ticket");
+        }
     }
 }

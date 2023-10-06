@@ -1,5 +1,6 @@
 package com.equal.b2csupport.auth;
 
+import com.equal.b2csupport.exception.UserNotFoundException;
 import com.equal.b2csupport.exception.UsernameAlreadyExistsException;
 import com.equal.b2csupport.jwt.JwtService;
 import com.equal.b2csupport.model.User;
@@ -7,6 +8,8 @@ import com.equal.b2csupport.repo.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -50,5 +53,23 @@ public class AuthenticationService {
         return AuthenticationResponse.builder()
                 .token(jwtToken)
                 .build();
+    }
+
+    public Long getCurrentUserId() {
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if (principal instanceof User) {
+            return ((User) principal).getId();
+        } else {
+            throw new UserNotFoundException("No authenticated user found");
+        }
+    }
+
+    public String getCurrentUsername() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if(auth != null) {
+            return auth.getName();
+        } else {
+            throw new UserNotFoundException("No authenticated user found");
+        }
     }
 }

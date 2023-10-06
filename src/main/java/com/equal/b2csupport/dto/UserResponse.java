@@ -9,6 +9,7 @@ import java.util.List;
 @Data
 @Builder
 public class UserResponse {
+    private Long id;
     private String name;
     private Role role;
     private List<TicketResponse> tickets;
