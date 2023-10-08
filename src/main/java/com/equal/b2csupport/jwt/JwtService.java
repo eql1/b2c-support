@@ -5,6 +5,7 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
@@ -16,10 +17,17 @@ import java.util.function.Function;
 
 @Service
 public class JwtService {
-    private static final String SECRET_KEY = "f6c893929a6244925e0cf2b35da4a20dc13a478dce6ae73a6611b8ef2f032f94"; // todo: change and replace with application property
+    private static String SECRET_KEY;
+    private final int jwtTokenExpirationTime;
 
-//    @Value("${jwtTokenExpirationTime}") todo: replace with application property
-    private final int jwtTokenExpirationTime = 1000 * 60 * 60;
+    public JwtService(@Value("${global.property.jwt.expiration-time}") int expirationTime) {
+        this.jwtTokenExpirationTime = expirationTime;
+    }
+
+    @Value("${global.property.jwt.secret-key}")
+    public void setSecretKey(String key) {
+        JwtService.SECRET_KEY = key;
+    }
 
     public String generateToken(UserDetails userDetails, Map<String, Object> extraClaims) {
         return Jwts.builder()

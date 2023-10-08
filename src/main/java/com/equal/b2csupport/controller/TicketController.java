@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-// todo: for test, change mappings and realizations
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("api/v1/tickets")
@@ -25,7 +24,7 @@ public class TicketController {
         return ResponseEntity.ok(ticketService.getUserTickets());
     }
 
-    @PostMapping("/{id}/status")
+    @PatchMapping("/{id}/status")
     public ResponseEntity<?> changeStatus(
             @PathVariable Long id,
             @RequestParam TicketStatus status) {
@@ -36,16 +35,18 @@ public class TicketController {
         }
     }
 
+    @PatchMapping("/{id}/archive")
+    public ResponseEntity<?> archiveTicket(@PathVariable Long id) throws TicketNotFoundException {
+        return ResponseEntity.ok(ticketService.archiveTicket(id));
+    }
 
     @PostMapping("/create")
     public ResponseEntity<TicketResponse> createTicket(@RequestBody TicketRequest ticketRequest) {
         return ResponseEntity.ok(ticketService.createTicket(ticketRequest));
     }
 
-    // done: implement get All tickets @PreAuthorize or @Secured in service, todo: read about SpEL and flexibility (check docs)
-    @GetMapping("/all")
+    @GetMapping
     public ResponseEntity<List<TicketResponse>> getAllTickets() {
         return ResponseEntity.ok(ticketService.getAllTickets());
     }
-
 }

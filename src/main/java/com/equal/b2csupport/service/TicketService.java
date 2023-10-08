@@ -30,7 +30,7 @@ public class TicketService {
     private final AuthenticationService authService;
 
     public List<TicketResponse> getUserTickets() {
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        String username = authService.getCurrentUsername();
         User user = userService.getUserByUsername(username);
         return ticketRepository.findByCreatedBy(user)
                 .map(tickets -> tickets.stream()
@@ -47,19 +47,15 @@ public class TicketService {
                 .collect(Collectors.toList());
     }
 
-    // todo: changeStatus for admin and support roles,
+    // todo: changeStatus for admin and support roles
     @Transactional
     public TicketResponse changeStatus(Long id, TicketStatus changeTo) throws TicketNotFoundException {
         Ticket ticket = ticketRepository.findById(id)
-                .orElseThrow(() -> new TicketNotFoundException("Tickit with id " + id + " not found"));
+                .orElseThrow(() -> new TicketNotFoundException("Ticket with id " + id + " not found"));
         checkAccess(ticket);
         ticket.setStatus(changeTo);
-        ticket = ticketRepository.save(ticket);
-        return mapperToResponse.mapToResponse(ticket);
-//        ticketRepository.updateTicketStatus(id, changeTo);
-//        return ticketRepository.findById(id).map(mapperToResponse::mapToResponse)
-//                .orElseThrow(() ->
-//                new UpdateFailedException("Failed to update ticket status"));
+        Ticket savedTicket = ticketRepository.save(ticket);
+        return mapperToResponse.mapToResponse(savedTicket);
     }
 
     @Transactional
@@ -73,9 +69,18 @@ public class TicketService {
                 .createdBy(user)
                 .build();
         Ticket savedTicket = ticketRepository.save(ticket);
-        return TicketResponse.fromTicket(savedTicket)
-                .createdBy(username)
-                .build();
+        return mapperToResponse.mapToResponse(savedTicket);
+    }
+
+    @Transactional
+    public TicketResponse archiveTicket(Long id) throws TicketNotFoundException {
+        Ticket ticket = ticketRepository.findById(id)
+                .orElseThrow(() -> new TicketNotFoundException("Ticket with id " + id + " not found"));
+        checkAccess(ticket);
+        changeStatus(ticket.getId(), TicketStatus.CLOSED);
+        ticket.setArchived(true);
+        Ticket savedTicket = ticketRepository.save(ticket);
+        return mapperToResponse.mapToResponse(savedTicket);
     }
 
     private void checkAccess(Ticket ticket) {
@@ -83,4 +88,5 @@ public class TicketService {
             throw new AccessDeniedException("Access denied to this ticket");
         }
     }
+
 }

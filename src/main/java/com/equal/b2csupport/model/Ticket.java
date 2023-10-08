@@ -25,4 +25,6 @@ public class Ticket {
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User createdBy;
+
+    private boolean isArchived = false;
 }

@@ -15,6 +15,7 @@ public class MapperToResponse {
                 .description(ticket.getDescription())
                 .status(ticket.getStatus())
                 .createdBy(ticket.getCreatedBy().getUsername())
+                .isArchived(ticket.isArchived())
                 .build();
     }
 

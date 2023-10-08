@@ -1,6 +1,9 @@
 package com.equal.b2csupport.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -12,25 +15,24 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.Collection;
 import java.util.List;
 
+
 @Entity
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-//@Table(name = "users",
-//    uniqueConstraints = {
-//    @UniqueConstraint(columnNames = "username")
-//})
 @Table(name = "users")
 public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    // todo: add @NotBlank, @Size(max), uniqueness
+    @NotNull
+    @Size(min = 3, max = 20)
     private String username;
 
-    // todo: @JsonIgnore
+    @JsonIgnore
+    @NotNull
     private String password;
 
     @Enumerated(EnumType.STRING)

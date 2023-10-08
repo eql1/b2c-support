@@ -11,8 +11,4 @@ import java.util.Optional;
 @Repository
 public interface TicketRepository extends JpaRepository<Ticket, Long> {
     Optional<List<Ticket>> findByCreatedBy(User user);
-
-//    @Modifying
-//    @Query("UPDATE Ticket ticket SET ticket.status = :newStatus WHERE ticket.id = :id")
-//    void updateTicketStatus(@Param("id") Long id, @Param("newStatus") TicketStatus newStatus);
 }
