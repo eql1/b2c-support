@@ -5,6 +5,7 @@ import com.equal.b2csupport.dto.TicketResponse;
 import com.equal.b2csupport.exception.TicketNotFoundException;
 import com.equal.b2csupport.model.TicketStatus;
 import com.equal.b2csupport.service.TicketService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +16,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("api/v1/tickets")
+@CrossOrigin(origins = "http://localhost:5173")
 public class TicketController {
     private final TicketService ticketService;
 
@@ -40,8 +42,13 @@ public class TicketController {
         return ResponseEntity.ok(ticketService.archiveTicket(id));
     }
 
+    @PatchMapping("/archive")
+    public ResponseEntity<List<TicketResponse>> archiveSelectedTickets(@RequestBody List<Long> ticketIds) {
+            return ResponseEntity.ok(ticketService.archiveSelectedTickets(ticketIds));
+    }
+
     @PostMapping("/create")
-    public ResponseEntity<TicketResponse> createTicket(@RequestBody TicketRequest ticketRequest) {
+    public ResponseEntity<TicketResponse> createTicket(@Valid @RequestBody TicketRequest ticketRequest) {
         return ResponseEntity.ok(ticketService.createTicket(ticketRequest));
     }
 

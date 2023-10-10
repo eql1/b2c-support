@@ -17,6 +17,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -34,6 +35,7 @@ public class TicketService {
         User user = userService.getUserByUsername(username);
         return ticketRepository.findByCreatedBy(user)
                 .map(tickets -> tickets.stream()
+                        .filter(ticket -> !ticket.isArchived())
                         .map(mapperToResponse::mapToResponse)
                         .collect(Collectors.toList()))
                 .orElse(Collections.emptyList());
@@ -60,6 +62,7 @@ public class TicketService {
 
     @Transactional
     public TicketResponse createTicket(TicketRequest ticketRequest) {
+        if(ticketRequest.getName() != null && ticketRequest.getDescription() != null);
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         User user = userService.getUserByUsername(username);
         Ticket ticket = Ticket.builder()
@@ -73,11 +76,25 @@ public class TicketService {
     }
 
     @Transactional
+    public List<TicketResponse> archiveSelectedTickets(List<Long> ticketIds) {
+        List<TicketResponse> tickets = new ArrayList<>();
+        for (Long ticket: ticketIds) {
+            try {
+                TicketResponse response = archiveTicket(ticket);
+                tickets.add(response);
+            } catch (TicketNotFoundException ex) {
+                System.err.println(ex.getMessage());
+            }
+        }
+        return tickets;
+    }
+
+    @Transactional
     public TicketResponse archiveTicket(Long id) throws TicketNotFoundException {
         Ticket ticket = ticketRepository.findById(id)
                 .orElseThrow(() -> new TicketNotFoundException("Ticket with id " + id + " not found"));
         checkAccess(ticket);
-        changeStatus(ticket.getId(), TicketStatus.CLOSED);
+        ticket.setStatus(TicketStatus.CLOSED);
         ticket.setArchived(true);
         Ticket savedTicket = ticketRepository.save(ticket);
         return mapperToResponse.mapToResponse(savedTicket);

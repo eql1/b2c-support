@@ -45,8 +45,9 @@ public class SecurityConfig {
         return new WebMvcConfigurer() {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
-                registry.addMapping("/**"); // todo: addMapping only for this app frontend
+                registry.addMapping("/**").allowedOrigins("http://localhost:5173");
             }
         };
     }
 }
+
