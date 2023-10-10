@@ -6,6 +6,9 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+import java.util.List;
+
 @Entity
 @Data
 @NoArgsConstructor
@@ -25,6 +28,15 @@ public class Ticket {
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User createdBy;
+
+    @OneToMany(mappedBy = "ticket")
+    private List<Message> messages;
+
+    private LocalDateTime lastEditedTime;
+
+    @ManyToOne
+    @JoinColumn(name = "last_edited_by_id")
+    private User lastEditedBy;
 
     private boolean isArchived = false;
 }
