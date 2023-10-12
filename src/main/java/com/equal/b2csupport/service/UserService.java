@@ -1,6 +1,6 @@
 package com.equal.b2csupport.service;
 
-import com.equal.b2csupport.dto.UserResponse;
+import com.equal.b2csupport.dto.user.UserResponse;
 import com.equal.b2csupport.model.User;
 import com.equal.b2csupport.repo.UserRepository;
 import com.equal.b2csupport.util.mappers.MapperToResponse;

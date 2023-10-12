@@ -1,5 +1,6 @@
-package com.equal.b2csupport.dto;
+package com.equal.b2csupport.dto.user;
 
+import com.equal.b2csupport.dto.ticket.TicketResponse;
 import com.equal.b2csupport.model.Role;
 import lombok.Builder;
 import lombok.Data;

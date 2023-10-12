@@ -1,4 +1,4 @@
-package com.equal.b2csupport.dto;
+package com.equal.b2csupport.dto.ticket;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;

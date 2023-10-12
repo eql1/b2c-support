@@ -1,10 +1,13 @@
-package com.equal.b2csupport.dto;
+package com.equal.b2csupport.dto.ticket;
 
+import com.equal.b2csupport.dto.message.MessageResponse;
 import com.equal.b2csupport.model.TicketStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.util.List;
 
 @Data
 @Builder
@@ -17,4 +20,5 @@ public class TicketResponse {
     private TicketStatus status;
     private String createdBy;
     private boolean isArchived;
+    private List<MessageResponse> messages;
 }

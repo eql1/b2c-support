@@ -2,8 +2,8 @@ package com.equal.b2csupport.service;
 
 
 import com.equal.b2csupport.auth.AuthenticationService;
-import com.equal.b2csupport.dto.TicketRequest;
-import com.equal.b2csupport.dto.TicketResponse;
+import com.equal.b2csupport.dto.ticket.TicketRequest;
+import com.equal.b2csupport.dto.ticket.TicketResponse;
 import com.equal.b2csupport.exception.TicketNotFoundException;
 import com.equal.b2csupport.model.Ticket;
 import com.equal.b2csupport.model.TicketStatus;
@@ -14,7 +14,6 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -49,6 +48,11 @@ public class TicketService {
                 .collect(Collectors.toList());
     }
 
+    public Ticket getTicketById(Long id) throws TicketNotFoundException {
+         return ticketRepository.findById(id)
+                .orElseThrow(() -> new TicketNotFoundException("Ticket with id " + id + "not found"));
+    }
+
     // todo: changeStatus for admin and support roles
     @Transactional
     public TicketResponse changeStatus(Long id, TicketStatus changeTo) throws TicketNotFoundException {
@@ -62,8 +66,7 @@ public class TicketService {
 
     @Transactional
     public TicketResponse createTicket(TicketRequest ticketRequest) {
-        if(ticketRequest.getName() != null && ticketRequest.getDescription() != null);
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        String username = authService.getCurrentUsername();
         User user = userService.getUserByUsername(username);
         Ticket ticket = Ticket.builder()
                 .name(ticketRequest.getName())

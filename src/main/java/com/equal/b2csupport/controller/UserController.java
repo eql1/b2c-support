@@ -1,6 +1,6 @@
 package com.equal.b2csupport.controller;
 
-import com.equal.b2csupport.dto.UserResponse;
+import com.equal.b2csupport.dto.user.UserResponse;
 import com.equal.b2csupport.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

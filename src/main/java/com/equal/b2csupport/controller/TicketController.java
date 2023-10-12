@@ -1,13 +1,15 @@
 package com.equal.b2csupport.controller;
 
-import com.equal.b2csupport.dto.TicketRequest;
-import com.equal.b2csupport.dto.TicketResponse;
+import com.equal.b2csupport.dto.message.MessageRequest;
+import com.equal.b2csupport.dto.message.MessageResponse;
+import com.equal.b2csupport.dto.ticket.TicketRequest;
+import com.equal.b2csupport.dto.ticket.TicketResponse;
 import com.equal.b2csupport.exception.TicketNotFoundException;
 import com.equal.b2csupport.model.TicketStatus;
+import com.equal.b2csupport.service.MessageService;
 import com.equal.b2csupport.service.TicketService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,6 +21,7 @@ import java.util.List;
 @CrossOrigin(origins = "http://localhost:5173")
 public class TicketController {
     private final TicketService ticketService;
+    private final MessageService messageService;
 
     @GetMapping("/user")
     public ResponseEntity<List<TicketResponse>> getUserTickets() {
@@ -29,13 +32,11 @@ public class TicketController {
     @PatchMapping("/{id}/status")
     public ResponseEntity<?> changeStatus(
             @PathVariable Long id,
-            @RequestParam TicketStatus status) {
-        try {
-            return ResponseEntity.ok(ticketService.changeStatus(id, status));
-        } catch (TicketNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Ticket not found");
-        }
+            @RequestParam TicketStatus status) throws TicketNotFoundException {
+        return ResponseEntity.ok(ticketService.changeStatus(id, status));
     }
+
+
 
     @PatchMapping("/{id}/archive")
     public ResponseEntity<?> archiveTicket(@PathVariable Long id) throws TicketNotFoundException {
@@ -50,6 +51,11 @@ public class TicketController {
     @PostMapping("/create")
     public ResponseEntity<TicketResponse> createTicket(@Valid @RequestBody TicketRequest ticketRequest) {
         return ResponseEntity.ok(ticketService.createTicket(ticketRequest));
+    }
+
+    @PostMapping("/message/create")
+    public ResponseEntity<MessageResponse> createMessage(@Valid @RequestBody MessageRequest messageRequest) throws TicketNotFoundException {
+        return ResponseEntity.ok(messageService.createMessage(messageRequest));
     }
 
     @GetMapping
