@@ -39,4 +39,16 @@ public class Ticket {
     private User lastEditedBy;
 
     private boolean isArchived = false;
+
+    @Override
+    public String toString() {
+        return "Ticket{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", description='" + description + '\'' +
+                ", status=" + status +
+                ", lastEditedTime=" + lastEditedTime +
+                ", isArchived=" + isArchived +
+                '}';
+    }
 }

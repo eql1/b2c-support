@@ -33,7 +33,16 @@ public class Message {
 
     private LocalDateTime createdAt;
 
-//    @PrePersist
+    @Override
+    public String toString() {
+        return "Message{" +
+                "id=" + id +
+                ", content='" + content + '\'' +
+                ", createdAt=" + createdAt +
+                '}';
+    }
+
+    //    @PrePersist
 //    protected void onCreate() {
 //        createdAt = LocalDateTime.now();
 //    }
