@@ -12,7 +12,6 @@ import com.equal.b2csupport.repo.TicketRepository;
 import com.equal.b2csupport.util.mappers.MapperToResponse;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
@@ -28,6 +27,7 @@ public class TicketService {
     private final UserService userService;
     private final MapperToResponse mapperToResponse;
     private final AuthenticationService authService;
+    private final AccessCheckService accessCheckService;
 
     public List<TicketResponse> getUserTickets() {
         String username = authService.getCurrentUsername();
@@ -58,7 +58,7 @@ public class TicketService {
     public TicketResponse changeStatus(Long id, TicketStatus changeTo) throws TicketNotFoundException {
         Ticket ticket = ticketRepository.findById(id)
                 .orElseThrow(() -> new TicketNotFoundException("Ticket with id " + id + " not found"));
-        checkAccess(ticket);
+        accessCheckService.checkAccess(ticket);
         ticket.setStatus(changeTo);
         Ticket savedTicket = ticketRepository.save(ticket);
         return mapperToResponse.mapToResponse(savedTicket);
@@ -96,17 +96,10 @@ public class TicketService {
     public TicketResponse archiveTicket(Long id) throws TicketNotFoundException {
         Ticket ticket = ticketRepository.findById(id)
                 .orElseThrow(() -> new TicketNotFoundException("Ticket with id " + id + " not found"));
-        checkAccess(ticket);
+        accessCheckService.checkAccess(ticket);
         ticket.setStatus(TicketStatus.CLOSED);
         ticket.setArchived(true);
         Ticket savedTicket = ticketRepository.save(ticket);
         return mapperToResponse.mapToResponse(savedTicket);
     }
-
-    private void checkAccess(Ticket ticket) {
-        if (!ticket.getCreatedBy().getId().equals(authService.getCurrentUserId())) {
-            throw new AccessDeniedException("Access denied to this ticket");
-        }
-    }
-
 }

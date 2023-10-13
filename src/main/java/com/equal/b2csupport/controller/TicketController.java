@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.nio.file.AccessDeniedException;
 import java.util.List;
 
 @RestController
@@ -54,7 +55,7 @@ public class TicketController {
     }
 
     @PostMapping("/message/create")
-    public ResponseEntity<MessageResponse> createMessage(@Valid @RequestBody MessageRequest messageRequest) throws TicketNotFoundException {
+    public ResponseEntity<MessageResponse> createMessage(@Valid @RequestBody MessageRequest messageRequest) throws TicketNotFoundException, AccessDeniedException {
         return ResponseEntity.ok(messageService.createMessage(messageRequest));
     }
 

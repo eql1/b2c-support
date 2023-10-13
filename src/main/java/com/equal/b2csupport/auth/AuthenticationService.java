@@ -55,10 +55,9 @@ public class AuthenticationService {
     }
 
     public Long getCurrentUserId() {
-        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        if (principal instanceof User) {
-            return ((User) principal).getId();
-        } else {
+        try {
+            return getCurrentUser().getId();
+        } catch (UserNotFoundException ex) {
             throw new UserNotFoundException("No authenticated user found");
         }
     }
@@ -67,6 +66,15 @@ public class AuthenticationService {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         if(auth != null) {
             return auth.getName();
+        } else {
+            throw new UserNotFoundException("No authenticated user found");
+        }
+    }
+
+    public User getCurrentUser() {
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if (principal instanceof User) {
+            return (User) principal;
         } else {
             throw new UserNotFoundException("No authenticated user found");
         }

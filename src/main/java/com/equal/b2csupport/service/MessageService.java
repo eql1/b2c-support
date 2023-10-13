@@ -13,9 +13,14 @@ import com.equal.b2csupport.repo.TicketRepository;
 import com.equal.b2csupport.util.mappers.MapperToResponse;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Service;
 
+import java.nio.file.AccessDeniedException;
 import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.Collection;
 
 @Service
 @RequiredArgsConstructor
@@ -26,10 +31,16 @@ public class MessageService {
     private final UserService userService;
     private final MapperToResponse mapper;
     private final TicketRepository ticketRepository;
+    private final AccessCheckService accessCheckService;
 
     @Transactional
-    public MessageResponse createMessage(MessageRequest messageRequest) throws TicketNotFoundException, UserNotFoundException {
+    public MessageResponse createMessage(MessageRequest messageRequest) throws TicketNotFoundException, UserNotFoundException, AccessDeniedException {
         Ticket relatedTicket = ticketService.getTicketById(messageRequest.getTicketId());
+        Collection<GrantedAuthority> authorities = Arrays.asList(
+                new SimpleGrantedAuthority("SUPPORT"),
+                new SimpleGrantedAuthority("ADMIN")
+        );
+        accessCheckService.checkAccess(relatedTicket, authorities);
         User relatedUser = userService.getUserByUsername(authService.getCurrentUsername());
         LocalDateTime creationTime = LocalDateTime.now();
         Message message = Message.builder()
@@ -44,8 +55,4 @@ public class MessageService {
         ticketRepository.save(relatedTicket);
         return mapper.mapToResponse(savedMessage);
     }
-
-
-
-
 }
