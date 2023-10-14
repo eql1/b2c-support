@@ -37,8 +37,6 @@ public class TicketController {
         return ResponseEntity.ok(ticketService.changeStatus(id, status));
     }
 
-
-
     @PatchMapping("/{id}/archive")
     public ResponseEntity<?> archiveTicket(@PathVariable Long id) throws TicketNotFoundException {
         return ResponseEntity.ok(ticketService.archiveTicket(id));
